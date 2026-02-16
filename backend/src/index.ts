@@ -3,7 +3,8 @@ import cors from 'cors';
 import session from 'express-session';
 import passport from 'passport';
 import dotenv from 'dotenv';
-import { Pool } from 'postgres';
+import authRouter from '@/routes/auth';
+import '@/config/passport';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Session configuration
 app.use(session({
@@ -32,10 +34,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes (add your routes here)
+// Routes
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
 });
+
+app.use('/api/auth', authRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
